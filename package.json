@@ -1,0 +1,11 @@
+{
+   "name": "uptime-monitoring-application",
+   "version": "1.0.0",
+   "description": "This is a Uptime/Downtime Monitoring Api built in node.js",
+   "main": "index.js",
+   "scripts": {
+      "start": "nodemon index"
+   },
+   "author": "Faiyaz Rahman",
+   "license": "ISC"
+}
