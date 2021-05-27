@@ -9,10 +9,13 @@
 const http = require('http');
 const { handleReqRes } = require(`${__dirname}/helpers/handleReqRes`);
 const enviroment = require('./helpers/enviroments');
+const data = require('./lib/data');
 //module scaffolding
 const app = {};
 
-//app configuration
+data.create('test', 'newFile', { name: 'Faiyaz', age: 18 }, (error) => {
+   console.log(error);
+});
 
 app.createServer = () => {
    const server = http.createServer(handleReqRes);
