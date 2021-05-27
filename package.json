@@ -4,8 +4,12 @@
    "description": "This is a Uptime/Downtime Monitoring Api built in node.js",
    "main": "index.js",
    "scripts": {
-      "start": "nodemon index"
+      "start": "cross-env NODE_ENV=stagging nodemon index",
+      "production": "cross-env NODE_ENV=production nodemon index"
    },
    "author": "Faiyaz Rahman",
-   "license": "ISC"
+   "license": "ISC",
+   "devDependencies": {
+      "cross-env": "^7.0.3"
+   }
 }
