@@ -13,10 +13,6 @@ const data = require('./lib/data');
 //module scaffolding
 const app = {};
 
-data.create('test', 'newFile', { name: 'Faiyaz', age: 18 }, (error) => {
-   console.log(error);
-});
-
 app.createServer = () => {
    const server = http.createServer(handleReqRes);
    server.listen(enviroment.port, () => {
