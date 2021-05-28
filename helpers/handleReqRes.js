@@ -10,6 +10,7 @@ const url = require('url');
 const { StringDecoder } = require('string_decoder');
 const routes = require('../routes');
 const { notFoundHandler } = require('../handlers/routesHandlers/notFoundHandler');
+const { jsonParse } = require('./utilities');
 
 const handler = {};
 
@@ -33,6 +34,7 @@ handler.handleReqRes = (req, res) => {
    });
    req.on('end', () => {
       data += decoder.end();
+      requestProps.body = jsonParse(data);
       selectedHandler(requestProps, (statusCode, payload) => {
          statusCode = typeof statusCode === 'number' ? statusCode : 500;
          payload = typeof payload === 'object' ? payload : {};
