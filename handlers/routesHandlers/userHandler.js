@@ -99,7 +99,62 @@ handler._user.get = (requestProps, callback) => {
       });
    }
 };
-handler._user.put = (requestProps, callback) => {};
+handler._user.put = (requestProps, callback) => {
+   //checking the fields
+   const firstName =
+      typeof requestProps.body.firstName === 'string' && requestProps.body.firstName.trim().length > 0
+         ? requestProps.body.firstName
+         : false;
+
+   const lastName =
+      typeof requestProps.body.lastName === 'string' && requestProps.body.lastName.trim().length > 0
+         ? requestProps.body.lastName
+         : false;
+
+   const phone =
+      typeof requestProps.body.phone === 'string' && requestProps.body.phone.trim().length === 11
+         ? requestProps.body.phone
+         : false;
+
+   const password =
+      typeof requestProps.body.password === 'string' && requestProps.body.password.trim().length > 0
+         ? requestProps.body.password
+         : false;
+
+   if (phone) {
+      if (firstName || lastName || password) {
+         data.read('users', phone, (error, user) => {
+            const userData = { ...jsonParse(user) };
+            if (!error && user) {
+               if (firstName) {
+                  userData.firstName = firstName;
+               }
+               if (lastName) {
+                  userData.lastName = lastName;
+               }
+               if (password) {
+                  userData.password = hash(password);
+               }
+               data.update('users', phone, userData, (error) => {
+                  if (!error) {
+                     callback(200, {
+                        message: 'User updated Successfully',
+                     });
+                  } else {
+                     callback(500, { error: 'There was a problem in the server side' });
+                  }
+               });
+            } else {
+               callback('There is a problem in your request');
+            }
+         });
+      } else {
+         callback('There is a problem in your request');
+      }
+   } else {
+      callback('There is a problem with your phone number');
+   }
+};
 handler._user.delete = (requestProps, callback) => {};
 
 module.exports = handler;
