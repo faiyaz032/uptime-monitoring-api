@@ -1,1 +1,7 @@
-{"firstName":"Faiyaz","lastName":"Rahman","phone":"01799096753","password":"0604c51d78ce525eee2e199b36a1fdb6bceddc81cc7604207e419bbfa48f87b2","tosAgreement":true}
+{
+   "firstName": "Faiyaz",
+   "lastName": "Rahman",
+   "phone": "01799096753",
+   "password": "0604c51d78ce525eee2e199b36a1fdb6bceddc81cc7604207e419bbfa48f87b2",
+   "tosAgreement": true
+}

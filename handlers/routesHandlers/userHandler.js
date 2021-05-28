@@ -7,7 +7,7 @@
 
 //dependencies
 const data = require('../../lib/data');
-const { hash } = require('../../helpers/utilities');
+const { hash, jsonParse } = require('../../helpers/utilities');
 
 const handler = {};
 
@@ -75,7 +75,30 @@ handler._user.post = (requestProps, callback) => {
       });
    }
 };
-handler._user.get = (requestProps, callback) => {};
+handler._user.get = (requestProps, callback) => {
+   //check if phone number is valid
+   const phone =
+      typeof requestProps.query.phone === 'string' && requestProps.query.phone.trim().length === 11
+         ? requestProps.query.phone
+         : false;
+   if (phone) {
+      data.read('users', phone, (error, user) => {
+         const userJson = { ...jsonParse(user) };
+         if (!error && user) {
+            delete userJson.password;
+            callback(200, userJson);
+         } else {
+            callback(404, {
+               error: 'Requested user was not found',
+            });
+         }
+      });
+   } else {
+      callback(404, {
+         error: 'Requested user was not found',
+      });
+   }
+};
 handler._user.put = (requestProps, callback) => {};
 handler._user.delete = (requestProps, callback) => {};
 
