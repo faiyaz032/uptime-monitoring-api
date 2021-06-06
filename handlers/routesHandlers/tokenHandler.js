@@ -87,7 +87,34 @@ handler._token.get = (requestProps, callback) => {
       callback(400, { error: 'There is problem in your request' });
    }
 };
-handler._token.put = (requestProps, callback) => {};
+handler._token.put = (requestProps, callback) => {
+   const id =
+      typeof requestProps.body.id === 'string' && requestProps.body.id.trim().length === 20
+         ? requestProps.body.id
+         : false;
+
+   const extend = typeof requestProps.body.extend === 'boolean' && requestProps.body.extend === true ? true : false;
+
+   if (id && extend) {
+      data.read('tokens', id, (error, token) => {
+         const tokenData = jsonParse(token);
+         if (tokenData.expires > Date.now()) {
+            tokenData.expires = Date.now() + 60 * 60 * 1000;
+            data.update('tokens', id, tokenData, (error) => {
+               if (!error) {
+                  callback(200);
+               } else {
+                  callback(500, { error: 'There is a problem in server side' });
+               }
+            });
+         } else {
+            callback(400, { error: 'Token already expired' });
+         }
+      });
+   } else {
+      callback(400, { error: 'There is a problem in your request' });
+   }
+};
 handler._token.delete = (requestProps, callback) => {};
 
 module.exports = handler;
