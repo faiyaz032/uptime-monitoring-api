@@ -115,6 +115,28 @@ handler._token.put = (requestProps, callback) => {
       callback(400, { error: 'There is a problem in your request' });
    }
 };
-handler._token.delete = (requestProps, callback) => {};
+handler._token.delete = (requestProps, callback) => {
+   //check the phone field
+   const id =
+      typeof requestProps.query.id === 'string' && requestProps.query.id.trim().length === 20
+         ? requestProps.query.id
+         : false;
+
+   if (id) {
+      data.read('tokens', id, (error, tokenData) => {
+         if (!error && tokenData) {
+            data.delete('tokens', id, (error) => {
+               if (!error) {
+                  callback(200, { message: 'Token Deleted Successfully' });
+               } else {
+                  callback(400, { error: 'There is a error in the server side' });
+               }
+            });
+         } else {
+            callback(400, { error: 'There is a error in the server side' });
+         }
+      });
+   }
+};
 
 module.exports = handler;
