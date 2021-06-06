@@ -36,7 +36,7 @@ utilities.randomStr = (strLen) => {
    if (length) {
       const chars = 'abcdefghijklmnopyzx0123456789';
       let output = '';
-      for (let i = 0; i < chars.length; i++) {
+      for (let i = 0; i < strLen; i += 1) {
          let randomChar = chars.charAt(Math.floor(Math.random() * chars.length));
          output += randomChar;
       }
