@@ -121,7 +121,29 @@ handler._check.post = (requestProps, callback) => {
       callback(400, { error: 'You have a problem in your inputs' });
    }
 };
-handler._check.get = (requestProps, callback) => {};
+handler._check.get = (requestProps, callback) => {
+   const id =
+      typeof requestProps.query.id === 'string' && requestProps.query.id.trim().length === 20
+         ? requestProps.query.id
+         : false;
+
+   if (id) {
+      data.read('checks', id, (error, checkData) => {
+         const checkObject = jsonParse(checkData);
+         //verify token
+         const token = typeof requestProps.headers.token === 'string' ? requestProps.headers.token : false;
+         _token.verify(token, checkObject.userPhone, (validToken) => {
+            if (validToken) {
+               callback(200, checkObject);
+            } else {
+               callback(400, { error: 'Your token is not valid' });
+            }
+         });
+      });
+   } else {
+      callback(400, { error: 'There is a problem in your request' });
+   }
+};
 handler._check.put = (requestProps, callback) => {};
 handler._check.delete = (requestProps, callback) => {};
 
