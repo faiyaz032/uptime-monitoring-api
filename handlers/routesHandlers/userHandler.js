@@ -138,7 +138,6 @@ handler._user.put = (requestProps, callback) => {
 
          _token.verify(token, phone, (tokenId) => {
             if (tokenId) {
-               console.log(tokenId);
                data.read('users', phone, (error, user) => {
                   const userData = { ...jsonParse(user) };
                   if (!error && user) {
