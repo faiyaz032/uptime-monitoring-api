@@ -226,6 +226,66 @@ handler._check.put = (requestProps, callback) => {
       callback(400, { error: 'Problem in your request' });
    }
 };
-handler._check.delete = (requestProps, callback) => {};
+handler._check.delete = (requestProps, callback) => {
+   const id =
+      typeof requestProps.query.id === 'string' && requestProps.query.id.trim().length === 20
+         ? requestProps.query.id
+         : false;
+
+   if (id) {
+      data.read('checks', id, (error, checkData) => {
+         const checkObject = jsonParse(checkData);
+         //verify token
+         const token = typeof requestProps.headers.token === 'string' ? requestProps.headers.token : false;
+         _token.verify(token, checkObject.userPhone, (validToken) => {
+            if (validToken) {
+               //delete the check data
+               data.delete('checks', id, (error) => {
+                  if (!error) {
+                     data.read('users', checkObject.userPhone, (error, userData) => {
+                        if (!error && userData) {
+                           const userObj = jsonParse(userData);
+                           let userChecks =
+                              typeof userObj.checks === 'object' && userObj.checks instanceof Array
+                                 ? userObj.checks
+                                 : [];
+
+                           //remove the deleted check id form user list of checks
+                           const checkPosition = userChecks.indexOf(id);
+                           if (checkPosition > -1) {
+                              userChecks.splice(checkPosition, 1);
+
+                              //resave the user data
+                              userObj.checks = userChecks;
+                              //update the user
+                              data.update('users', userObj.phone, userObj, (error) => {
+                                 if (!error) {
+                                    callback(200, { success: 'Check Deleted Successfully' });
+                                 } else {
+                                    callback(500, { error: 'There is a serverside error' });
+                                 }
+                              });
+                           } else {
+                              callback(500, {
+                                 error: 'The check id that you are trying to remove is not found in user',
+                              });
+                           }
+                        } else {
+                           callback(500, { error: 'There is a server side error / reading the user data' });
+                        }
+                     });
+                  } else {
+                     callback(500, { error: 'There is a server side error' });
+                  }
+               });
+            } else {
+               callback(400, { error: 'Your token is not valid' });
+            }
+         });
+      });
+   } else {
+      callback(400, { error: 'There is a problem in your request' });
+   }
+};
 
 module.exports = handler;
