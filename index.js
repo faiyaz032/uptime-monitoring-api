@@ -6,22 +6,19 @@
  */
 
 //Dependencies
-const http = require('http');
-const { handleReqRes } = require(`${__dirname}/helpers/handleReqRes`);
-const enviroment = require('./helpers/enviroments');
-const data = require('./lib/data');
-const { sendSms } = require('./helpers/notifications');
+const server = require('./lib/server');
+const workers = require('./lib/workers');
+
 //module scaffolding
 const app = {};
 
-app.createServer = () => {
-   const server = http.createServer(handleReqRes);
-   server.listen(enviroment.port, () => {
-      console.log(`Enviroment variable is ${enviroment.envName}`);
-      console.log(`listening on 127.0.0.1:${enviroment.port}`);
-   });
+app.init = () => {
+   //start the server
+   server.init();
+   //start the workers
+   workers.init();
 };
-app.handleReqRes = (req, res) => {};
+app.init();
 
-// starting the server
-app.createServer();
+// export the app
+module.exports = app;
